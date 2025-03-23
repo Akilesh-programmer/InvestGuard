@@ -135,7 +135,24 @@ const Home = () => {
             Notifications
           </a>
         </div>
-        <div className="absolute right-4 mt-2">
+        <div className="absolute right-4 mt-2 flex space-x-4">
+          <button className="bg-green-500 text-white px-4 py-3 rounded-lg text-xl hover:bg-green-600 flex items-center space-x-2">
+            <span>Add Stock</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+          </button>
           <button className="bg-black text-red-400 px-4 py-3 rounded-lg text-xl hover:bg-gray-900">
             Logout
           </button>
@@ -181,6 +198,9 @@ const Home = () => {
                     nameKey="name"
                     cx="50%"
                     cy="50%"
+                    startAngle={90} // Adjust angles to show data only at the ends
+                    endAngle={-270}
+                    innerRadius={60} // Creates hollow center
                     outerRadius={80}
                     fill="#8884d8"
                     label={({ name, x, y }) => {
@@ -201,7 +221,6 @@ const Home = () => {
                           fontWeight="bold"
                         >
                           {labelMap[name] || name}{" "}
-                          {/* Ensures correct labels are shown */}
                         </text>
                       );
                     }}
