@@ -4,15 +4,18 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import "./App.css"; // Optional: Custom styles
 import Home from "./pages/Home";
+import PrivateRoute from "./authentication/PrivateRoute";
 
 function App() {
   return (
     <Router>
       <div className="app-container text-5xl h-full bg-zinc-900">
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/home" element={<Home />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="/" element={<Home />} />
+          </Route>
         </Routes>
       </div>
     </Router>

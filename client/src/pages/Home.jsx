@@ -2,8 +2,16 @@ import React from "react";
 import { useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import AddStockForm from "./AddStockForm";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Remove JWT token
+    navigate("/login"); // Redirect to login page
+  };
+
   // Sample Data
   const user = { name: "UserName" };
   const stockData = {
@@ -70,7 +78,10 @@ const Home = () => {
             </svg>
           </button>
           {showForm && <AddStockForm onClose={() => setShowForm(false)} />}
-          <button className="bg-black text-red-400 px-4 py-3 rounded-lg text-xl hover:bg-gray-900">
+          <button
+            onClick={handleLogout}
+            className="bg-black text-red-400 px-4 py-3 rounded-lg text-xl hover:bg-gray-900"
+          >
             Logout
           </button>
         </div>
@@ -157,7 +168,7 @@ const Home = () => {
       {/* Bottom Buttons */}
       <div className="flex justify-between space-x-6 mt-10 mx-24">
         <button className="bg-white text-black px-6 py-3 rounded-lg text-lg shadow-md hover:bg-gray-200">
-          Top Stocks
+          Available Stocks
         </button>
         <button className="bg-white text-black px-6 py-3 rounded-lg text-lg shadow-md hover:bg-gray-200">
           Analyze Stock Price
