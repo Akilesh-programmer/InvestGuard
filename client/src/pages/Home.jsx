@@ -1,11 +1,46 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import AddStockForm from "./AddStockForm";
 import { useNavigate } from "react-router-dom";
+import useAxios from "../hooks/useAxios";
+import { useParams } from "react-router-dom";
 
 const Home = () => {
+  const { username } = useParams();
+  console.log(username)
+
   const navigate = useNavigate();
+  const axiosInstance = useAxios();
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  const [users, setUsers] = useState([]);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // Make the API request
+        const response = await axiosInstance.get(`${API_URL}users`); // Replace with actual endpoint
+        setUsers(response.data); // Store the data
+        console.log(response.data);
+
+        // Find the user ID by matching the username
+        const user = response.data.find((item) => item.username === username);
+        if (user) {
+          setUserId(user.id);
+          console.log("User ID found:", user.id);
+        } else {
+          console.warn("User not found");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    // Trigger the API call when the page loads
+    fetchUserData();
+  }, [API_URL]);
 
   const handleLogout = () => {
     localStorage.removeItem("token"); // Remove JWT token
@@ -13,7 +48,7 @@ const Home = () => {
   };
 
   // Sample Data
-  const user = { name: "UserName" };
+  const user = { name: username };
   const stockData = {
     totalInvestments: 10,
     currentValue: 40,
@@ -95,7 +130,6 @@ const Home = () => {
           <div className="bg-black p-4 rounded-lg shadow-[0_0_10px_3px_rgba(255,255,255,0.5)] w-40 text-center relative z-10">
             <h2 className="text-sm font-semibold">Welcome!</h2>
             <p className="text-pink-400 font-bold text-sm">{user.name}</p>
-            <p className="text-xs text-gray-400 mt-2">See your Stock details</p>
           </div>
         </div>
 
