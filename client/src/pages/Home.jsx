@@ -32,6 +32,7 @@ const Home = () => {
           console.log("User ID found:", user.id);
         } else {
           console.warn("User not found");
+          navigate('/login');
         }
       } catch (error) {
         console.error("Error fetching user data:", error);

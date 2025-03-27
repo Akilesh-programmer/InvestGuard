@@ -15,6 +15,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route element={<PrivateRoute />}>
             <Route path="/:username" element={<Home />} />
+            <Route path="/" element={<Home />} />
           </Route>
         </Routes>
       </div>
