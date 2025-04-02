@@ -1,15 +1,103 @@
 import React from "react";
+import { useState } from "react";
+import useAxios from "../hooks/useAxios";
 
-export default function AddStockForm({ onClose }) {
-  const handleSubmit = (e) => {
+import { ToastContainer, toast } from 'react-toastify';
+
+const showSuccess = (message) => {
+  toast.success(message, {
+    position: "top-right",
+    autoClose: 3000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    theme: "colored",
+  });
+};
+
+const showError = (message) => {
+  toast.error(message, {
+    position: "top-right",
+    autoClose: 3000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    theme: "colored",
+  });
+};
+
+export default function AddStockForm({ onClose, stocks, username, password }) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredCompanies, setFilteredCompanies] = useState([]);
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [stockUnit, setStockUnit] = useState("");
+  const [basePrice, setBasePrice] = useState("");
+
+  const axiosInstance = useAxios();
+
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (query.length > 0) {
+      const filtered = stocks.filter((company) =>
+        company.name.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredCompanies(filtered);
+    } else {
+      setFilteredCompanies([]);
+    }
+  };
+
+  const handleSelectCompany = (company) => {
+    setSelectedCompany(company);
+    setSearchQuery(company.name);
+    setFilteredCompanies([]); // Hide dropdown
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const data = {
-      companyName: formData.get("companyName"),
-      stockUnit: formData.get("stockUnit"),
-      basePrice: formData.get("basePrice"),
+    if (!selectedCompany) {
+      alert("Please select a company from the dropdown.");
+      return;
+    }
+
+    const stockData = {
+      companyId: selectedCompany.id,
+      companyName: selectedCompany.name,
+      stockUnit,
+      basePrice,
     };
-    console.log("Form Data:", data);
+
+    console.log("Stock Data Submitted:", stockData);
+
+    try {
+      const response = await axiosInstance.post(
+        "investments", 
+        {
+          stock_unit: stockUnit,
+          company: selectedCompany.id, // ID of the selected company
+          base_price: basePrice
+        },
+        {
+          auth: {
+            username,
+            password,
+          },
+        }
+      );
+  
+      console.log("Stock added successfully:", response.data);
+      showSuccess("Stock added successfully!");
+      onClose(); // Close the form modal after successful submission
+    } catch (error) {
+      console.error("Error adding stock", error);
+      showError("Failed to add stock! Please try again.");
+    }
+
     onClose();
   };
 
@@ -23,14 +111,31 @@ export default function AddStockForm({ onClose }) {
           <label htmlFor="companyName" className="font-medium text-gray-700">
             Company Name
           </label>
-          <input
-            id="companyName"
-            type="text"
-            name="companyName"
-            placeholder="Enter company name"
-            required
-            className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
-          />
+          <div className="relative w-full">
+            <input
+              id="companyName"
+              type="text"
+              name="companyName"
+              placeholder="Enter company name"
+              value={searchQuery}
+              onChange={handleSearch}
+              required
+              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+            />
+            {filteredCompanies.length > 0 && (
+              <ul className="absolute w-full bg-white text-gray-800 border rounded-md mt-1 shadow-md max-h-40 overflow-y-auto">
+                {filteredCompanies.map((company) => (
+                  <li
+                    key={company.id}
+                    className="px-4 py-2 cursor-pointer hover:bg-gray-200"
+                    onClick={() => handleSelectCompany(company)}
+                  >
+                    {company.name}
+                  </li> 
+                ))}
+              </ul>
+            )}
+          </div>
 
           <label htmlFor="stockUnit" className="font-medium text-gray-700">
             Stock Unit
@@ -40,6 +145,8 @@ export default function AddStockForm({ onClose }) {
             type="number"
             name="stockUnit"
             placeholder="Enter stock units"
+            value={stockUnit}
+            onChange={(e) => setStockUnit(e.target.value)}
             required
             className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
           />
@@ -53,6 +160,8 @@ export default function AddStockForm({ onClose }) {
             name="basePrice"
             placeholder="Enter base price"
             step="0.01"
+            value={basePrice}
+            onChange={(e) => setBasePrice(e.target.value)}
             required
             className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
           />

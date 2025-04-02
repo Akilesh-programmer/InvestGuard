@@ -67,7 +67,7 @@ const Login = () => {
       }
 
       showSuccess("Login Successful");
-      navigate(`/${username}`);
+      navigate(`/home/${username}/${password}`);
 
     } catch (error) {
       console.error("Network Error:", error);

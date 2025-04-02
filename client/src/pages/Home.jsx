@@ -7,41 +7,37 @@ import useAxios from "../hooks/useAxios";
 import { useParams } from "react-router-dom";
 
 const Home = () => {
-  const { username } = useParams();
-  console.log(username)
+  const { username, password } = useParams();
+  console.log(password);
+  console.log(username);
 
   const navigate = useNavigate();
   const axiosInstance = useAxios();
-  const API_URL = import.meta.env.VITE_API_URL;
 
-  const [users, setUsers] = useState([]);
-  const [userId, setUserId] = useState(null);
+  const [stocks, setStocks] = useState([]); // Store stock data
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchStocks = async () => {
       try {
-        // Make the API request
-        const response = await axiosInstance.get(`${API_URL}users`); // Replace with actual endpoint
-        setUsers(response.data); // Store the data
-        console.log(response.data);
-
-        // Find the user ID by matching the username
-        const user = response.data.find((item) => item.username === username);
-        if (user) {
-          setUserId(user.id);
-          console.log("User ID found:", user.id);
-        } else {
-          console.warn("User not found");
-          navigate('/login');
-        }
+        const response = await axiosInstance.get("/stocks", {
+          auth: {
+            username,
+            password,
+          },
+        });
+        setStocks(response.data);
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error("Error fetching stocks", error);
+        alert("Invalid credentials or network issue!");
       }
     };
 
-    // Trigger the API call when the page loads
-    fetchUserData();
-  }, [API_URL]);
+    fetchStocks(); // Automatically fetch stocks on mount
+  }, []);
+
+  useEffect(() => {
+    console.log("Updated stocks:", stocks);
+  }, [stocks]); // This runs whenever `stocks` updates
 
   const handleLogout = () => {
     localStorage.removeItem("token"); // Remove JWT token
@@ -113,7 +109,9 @@ const Home = () => {
               />
             </svg>
           </button>
-          {showForm && <AddStockForm onClose={() => setShowForm(false)} />}
+          {showForm && (
+            <AddStockForm stocks={stocks} username={username} password={password} onClose={() => setShowForm(false)} />
+          )}
           <button
             onClick={handleLogout}
             className="bg-black text-red-400 px-4 py-3 rounded-lg text-xl hover:bg-gray-900"
@@ -198,19 +196,6 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Bottom Buttons */}
-      <div className="flex justify-between space-x-6 mt-10 mx-24">
-        <button className="bg-white text-black px-6 py-3 rounded-lg text-lg shadow-md hover:bg-gray-200">
-          Available Stocks
-        </button>
-        <button className="bg-white text-black px-6 py-3 rounded-lg text-lg shadow-md hover:bg-gray-200">
-          Analyze Stock Price
-        </button>
-        <button className="bg-white text-black px-6 py-3 rounded-lg text-lg shadow-md hover:bg-gray-200">
-          Compare Stock Prices Over Time
-        </button>
       </div>
     </div>
   );
