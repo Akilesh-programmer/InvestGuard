@@ -39,6 +39,11 @@ const Register = () => {
     const email = e.target.email.value;
     const password = e.target.password.value;
 
+    if(!email.endsWith("@gmail.com") && !email.endsWith("@yahoo.com")) {
+      showError("Only gmail and yahoo mail addresses are allowed...");
+      return;
+    }
+
     try {
       const response = await fetch(`${API_URL}register`, {
         method: "POST",
