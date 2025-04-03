@@ -80,14 +80,11 @@ const Home = () => {
   const fetchLiveStockPrices = async (symbols) => {
     const API_KEY = VITE_ALPHA_VANTAGE_API_KEY;
     const livePrices = {};
-    console.log("Fetching");
-    console.log(symbols);
     try {
       for (const symbol of symbols) {
         const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`;
         const response = await fetch(url);
         const data = await response.json();
-        console.log("This is the dat", data);
 
         if (data["Global Quote"] && data["Global Quote"]["05. price"]) {
           livePrices[symbol] = parseFloat(
@@ -141,15 +138,6 @@ const Home = () => {
   }, [showForm]);
 
   useEffect(() => {
-    console.log("Updated stocks:", stocks);
-  }, [stocks]);
-
-  useEffect(() => {
-    console.log("hi", investmentDistributionData);
-  }, [investmentDistributionData]);
-
-  useEffect(() => {
-    console.log("Updated investments:", investments);
     if (investments.length > 0) {
       const calculatePortfolioSummary = (investments) => {
         const totalPrice = investments.reduce(
@@ -179,7 +167,6 @@ const Home = () => {
 
         // Fetch live stock prices
         const livePrices = await fetchLiveStockPrices(symbols);
-        console.log("symbols: ", investments);
 
         // Step 3: Aggregate investments by company
         const investmentMap = {};
@@ -209,7 +196,6 @@ const Home = () => {
 
       setPortfolioSummary(calculatePortfolioSummary(investments));
       updateInvestmentDistributionData();
-      console.log(portfolioSummary);
     }
   }, [investments]);
 
@@ -278,8 +264,6 @@ const Home = () => {
       }
     });
 
-    console.log(colorMap);
-
     return colorMap;
   };
 
@@ -291,7 +275,7 @@ const Home = () => {
   }, [stockDistributionData, investmentDistributionData]);
 
   return (
-    <div className="h-screen bg-zinc-800 text-white flex flex-col">
+    <div className="max-w-screen w-full bg-zinc-800 text-white flex flex-col">
       {/* Navbar */}
       <nav className="flex justify-center items-center p-4 text-lg space-x-10 relative">
         <div className="flex-1 flex justify-center space-x-10">
@@ -348,7 +332,7 @@ const Home = () => {
       </nav>
 
       {/* Main Content */}
-      <div className="flex flex-row p-10 gap-6">
+      <div className="flex flex-col md:flex-row items-center md:items-start p-10 gap-6">
         {/* Left Side - User Info */}
         <div className="relative">
           <div className="absolute inset-0 rounded-lg "></div>
@@ -374,7 +358,7 @@ const Home = () => {
               <button className="bg-gray-700 p-4 rounded w-64 text-center text-sm">
                 Total Stocks: {portfolioSummary.totalStocks}
               </button>
-              <div className="flex flex-row gap-12">
+              <div className="flex flex-col md:flex-row gap-12">
                 {/* Stocks Distribution Pie Chart */}
                 <div className="flex flex-col items-center mt-10">
                   <h3 className="text-white text-sm font-semibold ">
