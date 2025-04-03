@@ -12,7 +12,7 @@ import AddStockForm from "../components/AddStockForm";
 import { useNavigate } from "react-router-dom";
 import useAxios from "../hooks/useAxios";
 import { useParams } from "react-router-dom";
-
+import { Menu, X } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 
 const COLORS = [
@@ -61,6 +61,7 @@ const Home = () => {
   );
   const [calculatingInvestmentValue, setCalculatingInvestmentValue] =
     useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const navigate = useNavigate();
   const axiosInstance = useAxios();
@@ -277,26 +278,56 @@ const Home = () => {
   return (
     <div className="max-w-screen w-full bg-zinc-800 text-white flex flex-col">
       {/* Navbar */}
-      <nav className="flex justify-center items-center p-4 text-lg space-x-10 relative">
-        <div className="flex-1 flex justify-center space-x-10">
-          <a
-            href="#"
-            className="bg-gray-700 px-4 py-2 rounded-lg text-white hover:bg-gray-600"
-          >
-            Your Investments
-          </a>
+      <nav className="p-4 text-lg bg-gray-800 text-white relative">
+        <div className="flex justify-between items-center">
+          {/* Logo or Title */}
+          <h1 className="text-2xl font-bold">InvestGuard</h1>
 
-          <a
-            href="#"
-            className="bg-gray-700 px-4 py-2 rounded-lg text-white hover:bg-gray-600"
-          >
-            Notifications
-          </a>
+          {/* Desktop Menu */}
+          <div className="hidden md:flex space-x-10">
+            <a
+              href="#"
+              className="bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-600"
+            >
+              Your Investments
+            </a>
+            <a
+              href="#"
+              className="bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-600"
+            >
+              Notifications
+            </a>
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden">
+            {menuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
         </div>
-        <div className="absolute right-4 mt-2 flex space-x-4">
+
+        {/* Mobile Menu */}
+        {menuOpen && (
+          <div className="absolute top-16 right-4 bg-gray-500 shadow-lg rounded-lg w-64 flex flex-col items-start space-y-2 p-4 md:hidden">
+            <a
+              href="#"
+              className="w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg"
+            >
+              Your Investments
+            </a>
+            <a
+              href="#"
+              className="w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg"
+            >
+              Notifications
+            </a>
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="mt-4 flex flex-col md:flex-row md:mt-0 md:absolute md:right-4 md:items-center md:space-x-4">
           <button
             onClick={() => setShowForm(true)}
-            className="bg-green-500 text-white px-4 py-3 rounded-lg text-xl hover:bg-green-600 flex items-center space-x-2"
+            className="bg-green-500 px-4 py-2 my-6 justify-center rounded-lg text-lg flex items-center space-x-2 hover:bg-green-600"
           >
             <span>Add Stock</span>
             <svg
@@ -314,6 +345,7 @@ const Home = () => {
               />
             </svg>
           </button>
+
           {showForm && (
             <AddStockForm
               stocks={stocks}
@@ -322,9 +354,10 @@ const Home = () => {
               onClose={() => setShowForm(false)}
             />
           )}
+
           <button
             onClick={handleLogout}
-            className="bg-black text-red-400 px-4 py-3 rounded-lg text-xl hover:bg-gray-900"
+            className="bg-black text-red-400 px-4 py-2 rounded-lg text-lg hover:bg-gray-900"
           >
             Logout
           </button>
@@ -332,7 +365,7 @@ const Home = () => {
       </nav>
 
       {/* Main Content */}
-      <div className="flex flex-col md:flex-row items-center md:items-start p-10 gap-6">
+      <div className="flex flex-col md:flex-row md:mt-10 items-center md:items-start p-10 gap-6">
         {/* Left Side - User Info */}
         <div className="relative">
           <div className="absolute inset-0 rounded-lg "></div>
