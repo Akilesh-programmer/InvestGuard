@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import useAxios from "../hooks/useAxios";
 
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
 
 const showSuccess = (message) => {
   toast.success(message, {
@@ -76,11 +76,11 @@ export default function AddStockForm({ onClose, stocks, username, password }) {
 
     try {
       const response = await axiosInstance.post(
-        "investments", 
+        "investments",
         {
           stock_unit: stockUnit,
           company: selectedCompany.id, // ID of the selected company
-          base_price: basePrice
+          base_price: basePrice,
         },
         {
           auth: {
@@ -89,7 +89,7 @@ export default function AddStockForm({ onClose, stocks, username, password }) {
           },
         }
       );
-  
+
       console.log("Stock added successfully:", response.data);
       showSuccess("Stock added successfully!");
       onClose(); // Close the form modal after successful submission
@@ -131,20 +131,20 @@ export default function AddStockForm({ onClose, stocks, username, password }) {
                     onClick={() => handleSelectCompany(company)}
                   >
                     {company.name}
-                  </li> 
+                  </li>
                 ))}
               </ul>
             )}
           </div>
 
           <label htmlFor="stockUnit" className="font-medium text-gray-700">
-            Stock Unit
+            Number of Stocks
           </label>
           <input
             id="stockUnit"
             type="number"
             name="stockUnit"
-            placeholder="Enter stock units"
+            placeholder="Enter number of stocks"
             value={stockUnit}
             onChange={(e) => setStockUnit(e.target.value)}
             required
@@ -152,13 +152,13 @@ export default function AddStockForm({ onClose, stocks, username, password }) {
           />
 
           <label htmlFor="basePrice" className="font-medium text-gray-700">
-            Base Price
+            Bought Price
           </label>
           <input
             id="basePrice"
             type="number"
             name="basePrice"
-            placeholder="Enter base price"
+            placeholder="Enter bought price"
             step="0.01"
             value={basePrice}
             onChange={(e) => setBasePrice(e.target.value)}
