@@ -72,8 +72,6 @@ export default function AddStockForm({ onClose, stocks, username, password }) {
       basePrice,
     };
 
-    console.log("Stock Data Submitted:", stockData);
-
     try {
       const response = await axiosInstance.post(
         "investments",
@@ -89,8 +87,7 @@ export default function AddStockForm({ onClose, stocks, username, password }) {
           },
         }
       );
-
-      console.log("Stock added successfully:", response.data);
+      
       showSuccess("Stock added successfully!");
       onClose(); // Close the form modal after successful submission
     } catch (error) {

@@ -63,12 +63,10 @@ const Register = () => {
       }
 
       const data = await response.json();
-      console.log("Response:", data);
 
       showSuccess("Registration Successful");
       navigate("/login");
     } catch (error) {
-      console.log(error.response.status);
       console.error("Network Error:", error.message);
     }
   };
