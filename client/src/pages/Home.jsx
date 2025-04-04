@@ -16,20 +16,36 @@ import { Menu, X } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 
 const COLORS = [
-  "#FF5733",
-  "#33FF57",
-  "#3357FF",
-  "#FF33A8",
-  "#A833FF",
-  "#FF8C33",
-  "#33FFF4",
-  "#FFFF",
-  "#FFC300",
-  "#00A8FF",
-  "#FF5733",
-  "#C70039",
-  "#581845",
-  "#009688",
+  "#FF5733", // Red-Orange
+  "#33FF57", // Bright Green
+  "#3357FF", // Bright Blue
+  "#FF33A8", // Hot Pink
+  "#A833FF", // Purple
+  "#FF8C33", // Orange
+  "#33FFF4", // Aqua
+  "#FFC300", // Yellow
+  "#00A8FF", // Sky Blue
+  "#C70039", // Crimson
+  "#581845", // Deep Purple
+  "#009688", // Teal
+  "#FFD700", // Gold
+  "#40E0D0", // Turquoise
+  "#8A2BE2", // Blue Violet
+  "#FF4500", // Orange Red
+  "#7FFF00", // Chartreuse
+  "#DC143C", // Crimson Red
+  "#00CED1", // Dark Turquoise
+  "#FF1493", // Deep Pink
+  "#1E90FF", // Dodger Blue
+  "#ADFF2F", // Green Yellow
+  "#FF69B4", // Hot Pink
+  "#00FF7F", // Spring Green
+  "#6A5ACD", // Slate Blue
+  "#F08080", // Light Coral
+  "#20B2AA", // Light Sea Green
+  "#FFA07A", // Light Salmon
+  "#9370DB", // Medium Purple
+  "#3CB371", // Medium Sea Green
 ];
 
 const showError = (message) => {
