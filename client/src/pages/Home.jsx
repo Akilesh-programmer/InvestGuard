@@ -23,7 +23,7 @@ const COLORS = [
   "#A833FF",
   "#FF8C33",
   "#33FFF4",
-  "#8D33FF",
+  "#FFFF",
   "#FFC300",
   "#00A8FF",
   "#FF5733",
@@ -46,7 +46,7 @@ const showError = (message) => {
 
 const Home = () => {
   const { username, password } = useParams();
-  const VITE_ALPHA_VANTAGE_API_KEY = import.meta.env.VITE_ALPHA_VANTAGE_API_KEY;
+  const [livePortfolioValue, setLivePortfolioValue] = useState(0);
 
   const [investments, setInvestments] = useState([]);
   const [portfolioSummary, setPortfolioSummary] = useState({
@@ -79,20 +79,19 @@ const Home = () => {
   }, {});
 
   const fetchLiveStockPrices = async (symbols) => {
-    const API_KEY = VITE_ALPHA_VANTAGE_API_KEY;
+    const API_KEY = import.meta.env.VITE_FINNHUB_API_KEY;
     const livePrices = {};
+
     try {
       for (const symbol of symbols) {
-        const url = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`;
+        const url = `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${API_KEY}`;
         const response = await fetch(url);
         const data = await response.json();
 
-        if (data["Global Quote"] && data["Global Quote"]["05. price"]) {
-          livePrices[symbol] = parseFloat(
-            data["Global Quote"]["05. price"]
-          ).toFixed(2);
+        if (data && data.c) {
+          livePrices[symbol] = parseFloat(data.c).toFixed(2); // 'c' is current price
         } else {
-          livePrices[symbol] = null; // Handle missing data
+          livePrices[symbol] = null;
         }
       }
       return livePrices;
@@ -157,6 +156,8 @@ const Home = () => {
 
       const updateInvestmentDistributionData = async () => {
         // Step 1: Create a mapping of company ID -> Company Name
+        setLivePortfolioValue(0);
+
         const companyMap = Object.fromEntries(
           stocks.map((stock) => [stock.id, stock.name])
         );
@@ -186,6 +187,11 @@ const Home = () => {
           }
 
           investmentMap[companyId].value += livePrice * inv.stock_unit; // Sum the values
+
+          setLivePortfolioValue(
+            (prevLivePortfolioValue) =>
+              prevLivePortfolioValue + investmentMap[companyId].value
+          );
         });
 
         // Step 4: Convert aggregated data to an array
@@ -383,7 +389,10 @@ const Home = () => {
             {/* Left Section - Investment Details */}
             <div className="space-y-4 flex flex-col items-center">
               <button className="bg-gray-700 p-4 rounded w-64 text-center text-sm">
-                Total Value: ${portfolioSummary.totalPrice}
+                Total Value: $
+                {livePortfolioValue != 0
+                  ? Math.floor(livePortfolioValue)
+                  : portfolioSummary.totalPrice}
               </button>
               <button className="bg-gray-700 p-4 rounded w-64 text-center text-sm">
                 Total Companies: {portfolioSummary.totalCompanies}
