@@ -10,36 +10,26 @@ import {
 } from "recharts";
 
 const COLORS = [
-  "#FF5733",
-  "#33FF57",
-  "#3357FF",
-  "#FF33A8",
-  "#A833FF",
-  "#FF8C33",
-  "#33FFF4",
-  "#FFC300",
-  "#00A8FF",
-  "#C70039",
-  "#581845",
-  "#009688",
-  "#FFD700",
-  "#40E0D0",
-  "#8A2BE2",
-  "#FF4500",
-  "#7FFF00",
-  "#DC143C",
-  "#00CED1",
-  "#FF1493",
-  "#1E90FF",
-  "#ADFF2F",
-  "#FF69B4",
-  "#00FF7F",
-  "#6A5ACD",
-  "#F08080",
-  "#20B2AA",
-  "#FFA07A",
-  "#9370DB",
-  "#3CB371",
+  "#33FF57", // green
+  "#3357FF", // blue
+  "#A833FF", // violet
+  "#FF8C33", // orange (safe shade)
+  "#33FFF4", // cyan
+  "#FFC300", // golden yellow
+  "#00A8FF", // light blue
+  "#581845", // plum
+  "#009688", // teal
+  "#FFD700", // gold
+  "#40E0D0", // turquoise
+  "#8A2BE2", // blue violet
+  "#7FFF00", // chartreuse
+  "#1E90FF", // dodger blue
+  "#ADFF2F", // green yellow
+  "#00FF7F", // spring green
+  "#6A5ACD", // slate blue
+  "#20B2AA", // light sea green
+  "#9370DB", // medium purple
+  "#3CB371", // medium sea green
 ];
 
 const PortfolioData = ({
