@@ -122,55 +122,50 @@ const Home = () => {
       };
 
       const updateInvestmentDistributionData = async () => {
-        // Step 1: Create a mapping of company ID -> Company Name
-        setLivePortfolioValue(0);
+        setLivePortfolioValue(0); // reset
 
         const companyMap = Object.fromEntries(
           stocks.map((stock) => [stock.id, stock.name])
         );
 
-        // Step 2: Get unique symbols from investments
         const symbols = [
           ...new Set(investments.map((inv) => companySymbols[inv.company])),
         ].filter(Boolean);
 
-        // Fetch live stock prices
-        let livePrices = await fetchLiveStockPrices(symbols);
+        try {
+          const livePrices = await fetchLiveStockPrices(symbols);
+          console.log("✅ livePrices:", livePrices);
 
-        // Step 3: Aggregate investments by company
-        const investmentMap = {};
+          if (!Object.keys(livePrices).length) return;
 
-        investments.forEach((inv) => {
-          const companyId = inv.company;
-          const companyName = companyMap[companyId] || `Company ${companyId}`; // Use company name or fallback
-          const symbol = companySymbols[companyId];
-          const livePrice = livePrices[symbol] || inv.base_price; // Fallback to base price
+          const investmentMap = {};
+          let totalPortfolioValue = 0;
 
-          if (!investmentMap[companyId]) {
-            investmentMap[companyId] = {
-              name: companyName, // Use full company name
-              value: 0,
-            };
-          }
+          investments.forEach((inv) => {
+            const companyId = inv.company;
+            const companyName = companyMap[companyId] || `Company ${companyId}`;
+            const symbol = companySymbols[companyId];
+            const livePrice = livePrices[symbol] || inv.base_price;
 
-          investmentMap[companyId].value += livePrice * inv.stock_unit; // Sum the values
+            const investmentValue = livePrice * inv.stock_unit;
 
-          setLivePortfolioValue(
-            (prevLivePortfolioValue) =>
-              prevLivePortfolioValue + investmentMap[companyId].value
-          );
-        });
+            if (!investmentMap[companyId]) {
+              investmentMap[companyId] = {
+                name: companyName,
+                value: 0,
+              };
+            }
 
-        // Step 4: Convert aggregated data to an array
-        const updatedData = Object.values(investmentMap);
+            investmentMap[companyId].value += investmentValue;
+            totalPortfolioValue += investmentValue;
+          });
 
-        console.log(Object.keys(livePrices).length);
-
-        if (Object.keys(livePrices).length > 0) {
+          // Only update state **after** all calculations
+          setLivePortfolioValue(totalPortfolioValue);
+          setInvestmentDistributionData(Object.values(investmentMap));
           setCalculatingInvestmentValue(false);
-          setInvestmentDistributionData(updatedData);
-        } else {
-          livePrices = await fetchLiveStockPrices(symbols);
+        } catch (err) {
+          console.error("❌ Failed to fetch livePrices", err);
         }
       };
 
