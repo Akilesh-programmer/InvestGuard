@@ -164,8 +164,12 @@ const Home = () => {
         // Step 4: Convert aggregated data to an array
         const updatedData = Object.values(investmentMap);
 
+        console.log(investmentDistributionData.length)
+        console.log(investmentDistributionData)
         setInvestmentDistributionData(updatedData);
-        setCalculatingInvestmentValue(false);
+        if (investmentDistributionData.length > 0) {
+          setCalculatingInvestmentValue(false);
+        }
       };
 
       setPortfolioSummary(calculatePortfolioSummary(investments));
