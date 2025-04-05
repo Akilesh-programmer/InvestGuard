@@ -163,11 +163,10 @@ const Home = () => {
 
         // Step 4: Convert aggregated data to an array
         const updatedData = Object.values(investmentMap);
-
-        console.log(investmentDistributionData.length)
-        console.log(investmentDistributionData)
         setInvestmentDistributionData(updatedData);
-        if (investmentDistributionData.length > 0) {
+        console.log(Object.keys(livePrices).length);
+
+        if (Object.keys(livePrices).length > 0) {
           setCalculatingInvestmentValue(false);
         }
       };
