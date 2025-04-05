@@ -135,7 +135,7 @@ const Home = () => {
         ].filter(Boolean);
 
         // Fetch live stock prices
-        const livePrices = await fetchLiveStockPrices(symbols);
+        let livePrices = await fetchLiveStockPrices(symbols);
 
         // Step 3: Aggregate investments by company
         const investmentMap = {};
@@ -169,6 +169,8 @@ const Home = () => {
         if (Object.keys(livePrices).length > 0) {
           setCalculatingInvestmentValue(false);
           setInvestmentDistributionData(updatedData);
+        } else {
+          livePrices = await fetchLiveStockPrices(symbols);
         }
       };
 
