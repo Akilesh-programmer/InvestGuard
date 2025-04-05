@@ -172,9 +172,8 @@ const Home = () => {
         }
       };
 
-        setPortfolioSummary(calculatePortfolioSummary(investments));
-        updateInvestmentDistributionData();
-      
+      setPortfolioSummary(calculatePortfolioSummary(investments));
+      updateInvestmentDistributionData();
     }
   }, [investments]);
 
@@ -196,9 +195,9 @@ const Home = () => {
       <div className="flex flex-col md:flex-row md:mt-10 items-center md:items-start p-10 gap-6">
         {/* Left Side - User Info */}
         <div className="relative">
-          <div className="absolute inset-0 rounded-lg "></div>
-          <div className="bg-black p-4 rounded-lg shadow-[0_0_10px_3px_rgba(255,255,255,0.5)] w-40 text-center relative z-10">
-            <h2 className="text-sm font-semibold">Welcome!</h2>
+          <div className="absolute inset-0 rounded-lg bg-zinc-800"></div>
+          <div className="bg-zinc-900 p-4 rounded-2xl w-44 text-center relative z-10 shadow-[0_0_15px_rgba(255,255,255,0.3),inset_2px_2px_4px_rgba(255,255,255,0.05),inset_-2px_-2px_4px_rgba(0,0,0,0.5)]">
+            <h2 className="text-lg font-bold text-white">Welcome!</h2>
             <p className="text-pink-400 font-bold text-sm">{user.name}</p>
           </div>
         </div>

@@ -113,28 +113,32 @@ const PortfolioData = ({
 
   return (
     <div className="relative flex-1 flex flex-col items-center">
-      <div className="absolute inset-0 rounded-lg"></div>
-      <div className="bg-black p-6 rounded-lg shadow-[0_0_10px_3px_rgba(255,255,255,0.5)] flex-1 flex flex-row items-center justify-center gap-8 relative z-10">
+      <div className="absolute inset-0 rounded-lg bg-zinc-800"></div>
+      <div className="bg-zinc-900 p-6 rounded-2xl shadow-[0_0_15px_rgba(255,255,255,0.3),inset_2px_2px_5px_rgba(255,255,255,0.05),inset_-2px_-2px_5px_rgba(0,0,0,0.5)] flex-1 flex flex-row items-center justify-center gap-8 relative z-10">
         {/* Left Section - Investment Details */}
         <div className="space-y-4 flex flex-col items-center">
-          <button className="bg-gray-700 p-4 rounded w-64 text-center text-sm">
+          <button className="bg-zinc-800 text-white text-base font-medium px-4 py-2 w-52 rounded-lg shadow-[inset_1px_1px_3px_rgba(255,255,255,0.05),inset_-1px_-1px_3px_rgba(0,0,0,0.4)] hover:shadow-[0_0_6px_rgba(255,255,255,0.3)] transition-all duration-300">
             Total Value: $
             {livePortfolioValue != 0
               ? Math.floor(livePortfolioValue)
               : portfolioSummary.totalPrice}
           </button>
-          <button className="bg-gray-700 p-4 rounded w-64 text-center text-sm">
+
+          <button className="bg-zinc-800 text-white text-base font-medium px-4 py-2 w-52 rounded-lg shadow-[inset_1px_1px_3px_rgba(255,255,255,0.05),inset_-1px_-1px_3px_rgba(0,0,0,0.4)] hover:shadow-[0_0_6px_rgba(255,255,255,0.3)] transition-all duration-300">
             Total Companies: {portfolioSummary.totalCompanies}
           </button>
-          <button className="bg-gray-700 p-4 rounded w-64 text-center text-sm">
+
+          <button className="bg-zinc-800 text-white text-base font-medium px-4 py-2 w-52 rounded-lg shadow-[inset_1px_1px_3px_rgba(255,255,255,0.05),inset_-1px_-1px_3px_rgba(0,0,0,0.4)] hover:shadow-[0_0_6px_rgba(255,255,255,0.3)] transition-all duration-300">
             Total Stocks: {portfolioSummary.totalStocks}
           </button>
+
           <div className="flex flex-col md:flex-row gap-12">
             {/* Stocks Distribution Pie Chart */}
             <div className="flex flex-col items-center mt-10">
-              <h3 className="text-white text-sm font-semibold ">
+              <h3 className="text-white text-base font-semibold tracking-wide mb-4 text-center">
                 Stocks Distribution by Company
               </h3>
+
               <div className="w-60 h-60 relative z-20">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -170,10 +174,11 @@ const PortfolioData = ({
             </div>
 
             {/* Total Investment Value Pie Chart */}
-            <div className="flex flex-col items-center mt-10">
-              <h3 className="text-white text-sm font-semibold">
-                Investment Value by Company
+            <div className="flex flex-col items-center mt-0 md:mt-10">
+              <h3 className="text-white text-base font-semibold tracking-wide mb-4 text-center">
+                Investment Distribution by Company
               </h3>
+
               <div className="w-60 h-60 relative text-sm">
                 <ResponsiveContainer width="100%" height="100%">
                   {calculatingInvestmentValue ? (
