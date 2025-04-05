@@ -105,7 +105,12 @@ const Home = () => {
   }, [showForm]);
 
   useEffect(() => {
-    if (investments.length > 0) {
+    if (
+      investments.length > 0 &&
+      stocks.length > 0 &&
+      Object.keys(companySymbols).length > 0
+    ) {
+      console.log("👀 useEffect triggered");
       const calculatePortfolioSummary = (investments) => {
         const totalPrice = investments.reduce(
           (sum, inv) => sum + inv.total_price,
@@ -122,32 +127,29 @@ const Home = () => {
       };
 
       const updateInvestmentDistributionData = async () => {
-        setLivePortfolioValue(0); // reset
-
-        const companyMap = Object.fromEntries(
-          stocks.map((stock) => [stock.id, stock.name])
-        );
-
-        const symbols = [
-          ...new Set(investments.map((inv) => companySymbols[inv.company])),
-        ].filter(Boolean);
-
         try {
+          // Step 1
+          const companyMap = Object.fromEntries(
+            stocks.map((stock) => [stock.id, stock.name])
+          );
+
+          // Step 2
+          const symbols = [
+            ...new Set(investments.map((inv) => companySymbols[inv.company])),
+          ].filter(Boolean);
+
           const livePrices = await fetchLiveStockPrices(symbols);
           console.log("✅ livePrices:", livePrices);
 
-          if (!Object.keys(livePrices).length) return;
-
+          // Step 3
           const investmentMap = {};
-          let totalPortfolioValue = 0;
+          let portfolioTotal = 0;
 
           investments.forEach((inv) => {
             const companyId = inv.company;
             const companyName = companyMap[companyId] || `Company ${companyId}`;
             const symbol = companySymbols[companyId];
             const livePrice = livePrices[symbol] || inv.base_price;
-
-            const investmentValue = livePrice * inv.stock_unit;
 
             if (!investmentMap[companyId]) {
               investmentMap[companyId] = {
@@ -156,21 +158,23 @@ const Home = () => {
               };
             }
 
-            investmentMap[companyId].value += investmentValue;
-            totalPortfolioValue += investmentValue;
+            const currentValue = livePrice * inv.stock_unit;
+            investmentMap[companyId].value += currentValue;
+            portfolioTotal += currentValue;
           });
 
-          // Only update state **after** all calculations
-          setLivePortfolioValue(totalPortfolioValue);
+          // Final setState
+          setLivePortfolioValue(portfolioTotal);
           setInvestmentDistributionData(Object.values(investmentMap));
           setCalculatingInvestmentValue(false);
         } catch (err) {
-          console.error("❌ Failed to fetch livePrices", err);
+          console.error("🔥 Error updating investment distribution", err);
         }
       };
 
-      setPortfolioSummary(calculatePortfolioSummary(investments));
-      updateInvestmentDistributionData();
+        setPortfolioSummary(calculatePortfolioSummary(investments));
+        updateInvestmentDistributionData();
+      
     }
   }, [investments]);
 
