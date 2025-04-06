@@ -25,6 +25,7 @@ const Home = () => {
   const [livePortfolioValue, setLivePortfolioValue] = useState(0);
   const [showForm, setShowForm] = useState(false);
   const [investments, setInvestments] = useState([]);
+  const [investmentDistributionLoader, setInvestmentDistributionLoader] = useState(true);
   const [portfolioSummary, setPortfolioSummary] = useState({
     totalPrice: 0,
     totalCompanies: 0,
@@ -110,7 +111,7 @@ const Home = () => {
       stocks.length > 0 &&
       Object.keys(companySymbols).length > 0
     ) {
-      console.log("👀 useEffect triggered");
+      setInvestmentDistributionLoader(true);
       const calculatePortfolioSummary = (investments) => {
         const totalPrice = investments.reduce(
           (sum, inv) => sum + inv.total_price,
@@ -139,7 +140,6 @@ const Home = () => {
           ].filter(Boolean);
 
           const livePrices = await fetchLiveStockPrices(symbols);
-          console.log("✅ livePrices:", livePrices);
 
           // Step 3
           const investmentMap = {};
@@ -167,6 +167,7 @@ const Home = () => {
           setLivePortfolioValue(portfolioTotal);
           setInvestmentDistributionData(Object.values(investmentMap));
           setCalculatingInvestmentValue(false);
+          setInvestmentDistributionLoader(false);
         } catch (err) {
           console.error("🔥 Error updating investment distribution", err);
         }
@@ -210,6 +211,7 @@ const Home = () => {
           stocks={stocks}
           investmentDistributionData={investmentDistributionData}
           calculatingInvestmentValue={calculatingInvestmentValue}
+          investmentDistributionLoader={investmentDistributionLoader}
         />
 
         <div></div>

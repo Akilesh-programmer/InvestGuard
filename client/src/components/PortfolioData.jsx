@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
+import Loader from "./Loader";
 
 const COLORS = [
   "#33FF57", // green
@@ -39,6 +40,7 @@ const PortfolioData = ({
   stocks,
   investmentDistributionData,
   calculatingInvestmentValue,
+  investmentDistributionLoader,
 }) => {
   const companyLookup = useMemo(() => {
     return stocks.reduce((acc, company) => {
@@ -119,17 +121,29 @@ const PortfolioData = ({
         <div className="space-y-4 flex flex-col items-center">
           <button className="bg-zinc-800 text-white text-base font-medium px-4 py-2 w-52 rounded-lg shadow-[inset_1px_1px_3px_rgba(255,255,255,0.05),inset_-1px_-1px_3px_rgba(0,0,0,0.4)] hover:shadow-[0_0_6px_rgba(255,255,255,0.3)] transition-all duration-300">
             Total Value: $
-            {livePortfolioValue != 0
-              ? Math.floor(livePortfolioValue)
-              : portfolioSummary.totalPrice}
+            {livePortfolioValue != 0 ? (
+              Math.floor(livePortfolioValue)
+            ) : (
+              <p>Loading...</p>
+            )}
           </button>
 
           <button className="bg-zinc-800 text-white text-base font-medium px-4 py-2 w-52 rounded-lg shadow-[inset_1px_1px_3px_rgba(255,255,255,0.05),inset_-1px_-1px_3px_rgba(0,0,0,0.4)] hover:shadow-[0_0_6px_rgba(255,255,255,0.3)] transition-all duration-300">
-            Total Companies: {portfolioSummary.totalCompanies}
+            Total Companies:{" "}
+            {portfolioSummary.totalCompanies != 0 ? (
+              portfolioSummary.totalCompanies
+            ) : (
+              <p>Loading...</p>
+            )}
           </button>
 
           <button className="bg-zinc-800 text-white text-base font-medium px-4 py-2 w-52 rounded-lg shadow-[inset_1px_1px_3px_rgba(255,255,255,0.05),inset_-1px_-1px_3px_rgba(0,0,0,0.4)] hover:shadow-[0_0_6px_rgba(255,255,255,0.3)] transition-all duration-300">
-            Total Stocks: {portfolioSummary.totalStocks}
+            Total Stocks:{" "}
+            {portfolioSummary.totalStocks != 0 ? (
+              portfolioSummary.totalStocks
+            ) : (
+              <p>Loading...</p>
+            )}
           </button>
 
           <div className="flex flex-col md:flex-row gap-12">
@@ -140,6 +154,11 @@ const PortfolioData = ({
               </h3>
 
               <div className="w-60 h-60 relative z-20">
+                {stockDistributionData.length === 0 && (
+                  <div className="absolute inset-0 z-30 flex items-center justify-center">
+                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  </div>
+                )}
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -180,44 +199,40 @@ const PortfolioData = ({
               </h3>
 
               <div className="w-60 h-60 relative text-sm">
+                {investmentDistributionLoader && (
+                  <div className="absolute inset-0 z-30 flex items-center justify-center">
+                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  </div>
+                )}
                 <ResponsiveContainer width="100%" height="100%">
-                  {calculatingInvestmentValue ? (
-                    <div className="mt-25">
-                      Loading Current Investment Value (or) No Investment Found
-                    </div>
-                  ) : (
-                    <PieChart>
-                      <Pie
-                        data={investmentDistributionData}
-                        dataKey="value"
-                        nameKey="name"
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={50}
-                        outerRadius={80}
-                        paddingAngle={6}
-                        labelLine={false}
-                      >
-                        {investmentDistributionData.map((entry, index) => {
-                          return (
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={companyColors[entry.name] || "#8884d8"}
-                            />
-                          );
-                        })}
-                      </Pie>
-                      <Tooltip
-                        content={(tooltipProps) => (
-                          <CustomTooltip
-                            {...tooltipProps}
-                            label="Investments"
+                  <PieChart>
+                    <Pie
+                      data={investmentDistributionData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={80}
+                      paddingAngle={6}
+                      labelLine={false}
+                    >
+                      {investmentDistributionData.map((entry, index) => {
+                        return (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={companyColors[entry.name] || "#8884d8"}
                           />
-                        )}
-                        wrapperStyle={{ zIndex: 99999 }}
-                      />
-                    </PieChart>
-                  )}
+                        );
+                      })}
+                    </Pie>
+                    <Tooltip
+                      content={(tooltipProps) => (
+                        <CustomTooltip {...tooltipProps} label="Investments" />
+                      )}
+                      wrapperStyle={{ zIndex: 99999 }}
+                    />
+                  </PieChart>
                 </ResponsiveContainer>
               </div>
             </div>
