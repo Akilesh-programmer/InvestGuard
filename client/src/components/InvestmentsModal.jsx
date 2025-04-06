@@ -1,16 +1,27 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Dialog } from "@headlessui/react";
 import { Pencil, Trash2 } from "lucide-react";
+import useAxios from "../hooks/useAxios"; // adjust path as needed
 
 const InvestmentsModal = ({
   isOpen,
   onClose,
   investments,
+  setInvestments,
   investmentDistributionData,
   stocks,
+  refreshInvestments,
+  username,
+  password,
 }) => {
-  const [editStock, setEditStock] = useState(null);
+  const [editCompanyId, setEditCompanyId] = useState(null);
+  const [editStockUnit, setEditStockUnit] = useState("");
+  const [editBasePrice, setEditBasePrice] = useState("");
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [deletingCompanyId, setDeletingCompanyId] = useState(null);
+
+  const axiosInstance = useAxios();
 
   useEffect(() => {
     if (
@@ -59,6 +70,76 @@ const InvestmentsModal = ({
     return { companyName, totalStocks, currentValue };
   };
 
+  const handleEditSubmit = async () => {
+    if (!editStockUnit || !editBasePrice) return;
+
+    const investmentsToDelete = groupedInvestments[editCompanyId];
+    const companyId = parseInt(editCompanyId);
+
+    try {
+      setActionLoading(true);
+
+      // Delete all existing investments for the company
+      await Promise.all(
+        investmentsToDelete.map((inv) =>
+          axiosInstance.delete(`/investments/${inv.id}/delete`, {
+            auth: { username, password },
+          })
+        )
+      );
+
+      // Create new investment
+      await axiosInstance.post(
+        "/investments",
+        {
+          stock_unit: parseInt(editStockUnit),
+          base_price: parseFloat(editBasePrice),
+          company: companyId,
+        },
+        {
+          auth: { username, password },
+        }
+      );
+
+      setEditCompanyId(null);
+      setEditStockUnit("");
+      setEditBasePrice("");
+
+      refreshInvestments();
+    } catch (error) {
+      console.error("Error updating investment:", error);
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDeleteCompanyInvestments = async (companyId) => {
+    const investmentsToDelete = groupedInvestments[companyId];
+
+    try {
+      setDeletingCompanyId(companyId);
+
+      await Promise.all(
+        investmentsToDelete.map((inv) =>
+          axiosInstance.delete(`/investments/${inv.id}/delete`, {
+            auth: { username, password },
+          })
+        )
+      );
+
+      // ✅ Remove all investments for that company from local state
+      setInvestments((prev) =>
+        prev.filter((inv) => String(inv.company) !== String(companyId))
+      );
+    } catch (error) {
+      console.error("Error deleting investments:", error);
+    } finally {
+      setDeletingCompanyId(null);
+      refreshInvestments();
+      window.location.reload();
+    }
+  };
+
   return (
     <Dialog
       open={isOpen}
@@ -81,6 +162,8 @@ const InvestmentsModal = ({
               {Object.keys(groupedInvestments).map((companyId) => {
                 const { companyName, totalStocks, currentValue } =
                   calculateSummary(companyId);
+
+                const isEditing = editCompanyId === companyId;
 
                 return (
                   <div
@@ -109,23 +192,83 @@ const InvestmentsModal = ({
                           </div>
                         )}
                       </div>
+
+                      {isEditing && (
+                        <div className="mt-4 space-y-2">
+                          <div className="flex gap-2">
+                            <input
+                              type="number"
+                              value={editStockUnit}
+                              onChange={(e) => setEditStockUnit(e.target.value)}
+                              placeholder="Stock Units"
+                              className="px-3 py-1 bg-zinc-700 rounded text-white w-1/2"
+                            />
+                            <div className="px-3 py-1 bg-zinc-700 rounded text-white w-1/2 flex items-center">
+                              <span className="text-gray-300 mr-2">
+                                Base Price:
+                              </span>
+                              <span className="text-white font-medium">
+                                $
+                                {
+                                  groupedInvestments[editCompanyId][0]
+                                    ?.base_price
+                                }
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={handleEditSubmit}
+                              disabled={actionLoading}
+                              className="bg-green-600 hover:bg-green-500 px-3 py-1 rounded-md"
+                            >
+                              {actionLoading ? "Saving..." : "Save"}
+                            </button>
+                            <button
+                              onClick={() => {
+                                setEditCompanyId(null);
+                                setEditStockUnit("");
+                                setEditBasePrice("");
+                              }}
+                              className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-md"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <div className="flex gap-2 mt-4 sm:mt-0 sm:ml-4">
-                      <button
-                        onClick={() => setEditStock(companyId)}
-                        className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-md flex items-center gap-1"
-                      >
-                        <Pencil size={16} />
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => console.log("Delete", companyId)}
-                        className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-md flex items-center gap-1"
-                      >
-                        <Trash2 size={16} />
-                        Delete
-                      </button>
-                    </div>
+
+                    {!isEditing && (
+                      <div className="flex gap-2 mt-4 sm:mt-0 sm:ml-4">
+                        <button
+                          onClick={() => {
+                            setEditCompanyId(companyId);
+                            setEditStockUnit(totalStocks);
+                            const existing = groupedInvestments[companyId][0];
+                            setEditBasePrice(existing.base_price);
+                          }}
+                          className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-md flex items-center gap-1"
+                        >
+                          <Pencil size={16} />
+                          Edit
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleDeleteCompanyInvestments(companyId)
+                          }
+                          className="bg-red-600 hover:bg-red-500 text-white px-3 py-1 rounded-md flex items-center gap-2"
+                          disabled={deletingCompanyId === companyId}
+                        >
+                          {deletingCompanyId === companyId ? (
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          ) : (
+                            <Trash2 size={16} />
+                          )}
+                          Delete
+                        </button>
+                      </div>
+                    )}
                   </div>
                 );
               })}

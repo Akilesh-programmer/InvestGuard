@@ -9,6 +9,8 @@ import InvestmentsModal from "./InvestmentsModal";
 const Header = ({
   stocks,
   investments,
+  refreshInvestments,
+  setInvestments,
   investmentDistributionData,
   username,
   password,
@@ -23,6 +25,8 @@ const Header = ({
     localStorage.removeItem("token"); // Remove JWT token
     navigate("/login"); // Redirect to login page
   };
+
+  
 
   return (
     <nav className="p-4 text-lg bg-gray-800 text-white relative">
@@ -42,8 +46,12 @@ const Header = ({
             isOpen={isInvestmentsModalOpen}
             onClose={() => setIsInvestmentsModalOpen(false)}
             investments={investments}
+            setInvestments={setInvestments}
             investmentDistributionData={investmentDistributionData}
             stocks={stocks}
+            username={username}
+            password={password}
+            refreshInvestments={refreshInvestments}
           />
           <a
             href="#"

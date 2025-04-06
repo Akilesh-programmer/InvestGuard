@@ -39,6 +39,8 @@ const Home = () => {
   );
   const [calculatingInvestmentValue, setCalculatingInvestmentValue] =
     useState(true);
+  const [refreshInvestmentDistribution, setRefreshInvestmentDistribution] =
+    useState(false);
 
   const axiosInstance = useAxios();
 
@@ -109,6 +111,13 @@ const Home = () => {
     fetchStocks(); // Automatically fetch stocks on mount
     fetchPortfolio();
   }, [showForm]);
+
+  const refreshInvestments = async () => {
+    const res = await axiosInstance.get("/investments", {
+      auth: { username, password },
+    });
+    setInvestments(res.data); // or however you're storing them in state
+  };
 
   useEffect(() => {
     if (
@@ -183,8 +192,13 @@ const Home = () => {
 
       setPortfolioSummary(calculatePortfolioSummary(investments));
       updateInvestmentDistributionData();
+      console.log("investments: ", investments);
     }
-  }, [investments]);
+  }, [investments, refreshInvestmentDistribution]);
+
+  useEffect(() => {
+    console.log("investment distribution data: ", investmentDistributionData);
+  }, [investmentDistributionData]);
 
   const user = { name: username };
 
@@ -195,6 +209,8 @@ const Home = () => {
       <Header
         stocks={stocks}
         investments={investments}
+        setInvestments={setInvestments}
+        refreshInvestments={refreshInvestments}
         investmentDistributionData={investmentDistributionData}
         username={username}
         password={password}

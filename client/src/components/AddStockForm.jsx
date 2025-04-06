@@ -34,6 +34,7 @@ export default function AddStockForm({ onClose, stocks, username, password }) {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [stockUnit, setStockUnit] = useState("");
   const [basePrice, setBasePrice] = useState("");
+  const [addingStock, setAddingStock] = useState(false);
 
   const axiosInstance = useAxios();
 
@@ -66,6 +67,7 @@ export default function AddStockForm({ onClose, stocks, username, password }) {
     }
 
     try {
+      setAddingStock(true);
       const response = await axiosInstance.post(
         "investments",
         {
@@ -86,6 +88,8 @@ export default function AddStockForm({ onClose, stocks, username, password }) {
     } catch (error) {
       console.error("Error adding stock", error);
       showError("Failed to add stock! Please try again.");
+    } finally {
+      setAddingStock(false);
     }
 
     onClose();
@@ -168,7 +172,7 @@ export default function AddStockForm({ onClose, stocks, username, password }) {
               type="submit"
               className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
             >
-              Add
+              {addingStock ? <p>Adding...</p> : <p>Add</p>}
             </button>
           </div>
         </form>
