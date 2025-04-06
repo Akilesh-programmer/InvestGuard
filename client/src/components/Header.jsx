@@ -4,15 +4,25 @@ import { useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import AddStockForm from "./AddStockForm";
 
-const Header = ({stocks, username, password, showForm, setShowForm}) => {
-    const navigate = useNavigate();
-    const [menuOpen, setMenuOpen] = useState(false);
-    
+import InvestmentsModal from "./InvestmentsModal";
 
-    const handleLogout = () => {
-        localStorage.removeItem("token"); // Remove JWT token
-        navigate("/login"); // Redirect to login page
-      };
+const Header = ({
+  stocks,
+  investments,
+  investmentDistributionData,
+  username,
+  password,
+  showForm,
+  setShowForm,
+}) => {
+  const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isInvestmentsModalOpen, setIsInvestmentsModalOpen] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Remove JWT token
+    navigate("/login"); // Redirect to login page
+  };
 
   return (
     <nav className="p-4 text-lg bg-gray-800 text-white relative">
@@ -22,12 +32,19 @@ const Header = ({stocks, username, password, showForm, setShowForm}) => {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-10">
-          <a
-            href="#"
+          <button
             className="bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-600"
+            onClick={() => setIsInvestmentsModalOpen(true)}
           >
             Your Investments
-          </a>
+          </button>
+          <InvestmentsModal
+            isOpen={isInvestmentsModalOpen}
+            onClose={() => setIsInvestmentsModalOpen(false)}
+            investments={investments}
+            investmentDistributionData={investmentDistributionData}
+            stocks={stocks}
+          />
           <a
             href="#"
             className="bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-600"
@@ -45,18 +62,25 @@ const Header = ({stocks, username, password, showForm, setShowForm}) => {
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="absolute top-16 right-4 bg-gray-500 shadow-lg rounded-lg w-64 flex flex-col items-start space-y-2 p-4 md:hidden">
-          <a
-            href="#"
-            className="w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg"
+          <button
+            className="bg-gray-700 px-4 py-2 w-full rounded-lg hover:bg-gray-600"
+            onClick={() => setIsInvestmentsModalOpen(true)}
           >
             Your Investments
-          </a>
-          <a
-            href="#"
-            className="w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg"
+          </button>
+          <InvestmentsModal
+            isOpen={isInvestmentsModalOpen}
+            onClose={() => setIsInvestmentsModalOpen(false)}
+            investments={investments}
+            investmentDistributionData={investmentDistributionData}
+            stocks={stocks}
+          />
+          <button
+            className="bg-gray-700 px-4 py-2 w-full rounded-lg hover:bg-gray-600"
+            onClick={() => setIsInvestmentsModalOpen(true)}
           >
             Notifications
-          </a>
+          </button>
         </div>
       )}
 

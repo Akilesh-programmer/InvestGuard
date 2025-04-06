@@ -25,7 +25,8 @@ const Home = () => {
   const [livePortfolioValue, setLivePortfolioValue] = useState(0);
   const [showForm, setShowForm] = useState(false);
   const [investments, setInvestments] = useState([]);
-  const [investmentDistributionLoader, setInvestmentDistributionLoader] = useState(true);
+  const [investmentDistributionLoader, setInvestmentDistributionLoader] =
+    useState(true);
   const [portfolioSummary, setPortfolioSummary] = useState({
     totalPrice: 0,
     totalCompanies: 0,
@@ -65,7 +66,9 @@ const Home = () => {
       return livePrices;
     } catch (error) {
       console.error("Error fetching live stock prices:", error);
-      showError("Error fetching live stock prices!! Please refresh and try again")
+      showError(
+        "Error fetching live stock prices!! Please refresh and try again"
+      );
       return {};
     }
   };
@@ -99,7 +102,7 @@ const Home = () => {
         setInvestments(response.data);
       } catch (error) {
         console.error("Error fetching portfolio", error);
-        showError("Error fetching portfolio!!. Please refresh and try again.")
+        showError("Error fetching portfolio!!. Please refresh and try again.");
       }
     };
 
@@ -172,7 +175,9 @@ const Home = () => {
           setInvestmentDistributionLoader(false);
         } catch (err) {
           console.error("🔥 Error updating investment distribution", err);
-          showError("Error getting investment distribution data. Please refresh and try again.")
+          showError(
+            "Error getting investment distribution data. Please refresh and try again."
+          );
         }
       };
 
@@ -189,6 +194,8 @@ const Home = () => {
     <div className="max-w-screen w-full bg-zinc-800 text-white flex flex-col">
       <Header
         stocks={stocks}
+        investments={investments}
+        investmentDistributionData={investmentDistributionData}
         username={username}
         password={password}
         showForm={showForm}
