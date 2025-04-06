@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -31,6 +31,20 @@ const showError = (message) => {
   });
 };
 
+const showInfoMessage = () => {
+  toast.info(
+    "First Time connecting might take around 30 second due to spin down of backend due to inactivity... Please be patient...",
+    {
+      position: "top-right",
+      autoClose: 5000, // 5 seconds
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    }
+  );
+};
+
 const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -39,6 +53,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    showInfoMessage();
     const username = e.target.username.value;
     const password = e.target.password.value;
 
