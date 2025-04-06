@@ -5,6 +5,7 @@ import { Menu, X } from "lucide-react";
 import AddStockForm from "./AddStockForm";
 
 import InvestmentsModal from "./InvestmentsModal";
+import NotificationModal from "./NotificationModal";
 
 const Header = ({
   stocks,
@@ -20,13 +21,12 @@ const Header = ({
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isInvestmentsModalOpen, setIsInvestmentsModalOpen] = useState(false);
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("token"); // Remove JWT token
     navigate("/login"); // Redirect to login page
   };
-
-  
 
   return (
     <nav className="p-4 text-lg bg-gray-800 text-white relative">
@@ -37,7 +37,7 @@ const Header = ({
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-10">
           <button
-            className="bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-600"
+            className="bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-600 whitespace-nowrap"
             onClick={() => setIsInvestmentsModalOpen(true)}
           >
             Your Investments
@@ -53,12 +53,16 @@ const Header = ({
             password={password}
             refreshInvestments={refreshInvestments}
           />
-          <a
-            href="#"
-            className="bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-600"
+          <button
+            className="bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-600 whitespace-nowrap"
+            onClick={() => setIsNotificationModalOpen(true)}
           >
             Notifications
-          </a>
+          </button>
+          <NotificationModal
+            isOpen={isNotificationModalOpen}
+            onClose={() => setIsNotificationModalOpen(false)}
+          />
         </div>
 
         {/* Mobile Menu Button */}
@@ -84,11 +88,15 @@ const Header = ({
             stocks={stocks}
           />
           <button
-            className="bg-gray-700 px-4 py-2 w-full rounded-lg hover:bg-gray-600"
-            onClick={() => setIsInvestmentsModalOpen(true)}
+            className="bg-gray-700 px-4 py-2 w-full rounded-lg hover:bg-gray-600 whitespace-nowrap"
+            onClick={() => setIsNotificationModalOpen(true)}
           >
             Notifications
           </button>
+          <NotificationModal
+            isOpen={isNotificationModalOpen}
+            onClose={() => setIsNotificationModalOpen(false)}
+          />
         </div>
       )}
 
