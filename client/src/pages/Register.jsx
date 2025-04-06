@@ -72,6 +72,7 @@ const Register = () => {
       navigate("/login");
     } catch (error) {
       console.error("Network Error:", error.message);
+      showError("Something went wrong. Please try again.")
     } finally {
       setLoading(false);
     }

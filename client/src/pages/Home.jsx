@@ -65,6 +65,7 @@ const Home = () => {
       return livePrices;
     } catch (error) {
       console.error("Error fetching live stock prices:", error);
+      showError("Error fetching live stock prices!! Please refresh and try again")
       return {};
     }
   };
@@ -98,6 +99,7 @@ const Home = () => {
         setInvestments(response.data);
       } catch (error) {
         console.error("Error fetching portfolio", error);
+        showError("Error fetching portfolio!!. Please refresh and try again.")
       }
     };
 
@@ -170,6 +172,7 @@ const Home = () => {
           setInvestmentDistributionLoader(false);
         } catch (err) {
           console.error("🔥 Error updating investment distribution", err);
+          showError("Error getting investment distribution data. Please refresh and try again.")
         }
       };
 
