@@ -1,7 +1,9 @@
 import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "../components/Loader";
 
 // Success Toast
 const showSuccess = (message) => {
@@ -31,15 +33,17 @@ const showError = (message) => {
 
 const Register = () => {
   const API_URL = import.meta.env.VITE_API_URL;
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const username = e.target.username.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    if(!email.endsWith("@gmail.com") && !email.endsWith("@yahoo.com")) {
+    if (!email.endsWith("@gmail.com") && !email.endsWith("@yahoo.com")) {
       showError("Only gmail and yahoo mail addresses are allowed...");
       return;
     }
@@ -68,6 +72,8 @@ const Register = () => {
       navigate("/login");
     } catch (error) {
       console.error("Network Error:", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -80,6 +86,7 @@ const Register = () => {
       <div className="absolute bottom-0 right-0 w-[700px] h-[700px] bg-green-500 rounded-full opacity-80 transform translate-x-56 translate-y-32" />
 
       <div className="bg-gray-800 p-10 rounded-lg shadow-3xl w-[700px] relative z-10 bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 bg-opacity-30 shadow-[0px_10px_30px_rgba(0,0,0,0.7)] backdrop-blur-3xl">
+        {loading && <Loader />}
         <form className="space-y-6" onSubmit={handleSubmit}>
           <input
             name="username"

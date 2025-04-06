@@ -1,7 +1,9 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { Link, useNavigate} from "react-router-dom";
+import { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Loader from "../components/Loader";
 
 // Success Toast
 const showSuccess = (message) => {
@@ -29,13 +31,14 @@ const showError = (message) => {
   });
 };
 
-
 const Login = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const API_URL = import.meta.env.VITE_API_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const username = e.target.username.value;
     const password = e.target.password.value;
 
@@ -51,15 +54,15 @@ const Login = () => {
         }),
       });
 
-      if(response.status===401) {
+      if (response.status === 401) {
         showError("User does not exist or password is wrong.");
         return;
       }
 
       const data = await response.json();
       const token = data.token;
-      
-      if(token) {
+
+      if (token) {
         localStorage.setItem("token", token);
       } else {
         showError("Something went wrong, please try again");
@@ -68,9 +71,10 @@ const Login = () => {
 
       showSuccess("Login Successful");
       navigate(`/home/${username}/${password}`);
-
     } catch (error) {
       console.error("Network Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -82,6 +86,7 @@ const Login = () => {
       <div className="absolute bottom-0 right-0 w-[700px] h-[700px] bg-green-500 rounded-full opacity-80 transform translate-x-56 translate-y-32" />
 
       <div className="bg-gray-800 p-10 rounded-lg shadow-3xl w-[700px] relative z-10 bg-gradient-to-br from-gray-700 via-gray-800 to-gray-900 bg-opacity-30 shadow-[0px_10px_30px_rgba(0,0,0,0.7)] backdrop-blur-3xl">
+        {loading && <Loader />}
         <form onSubmit={handleSubmit} className="space-y-6">
           <input
             name="username"
